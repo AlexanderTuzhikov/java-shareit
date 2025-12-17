@@ -4,12 +4,13 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 /**
- * TODO Sprint add-item-requests.
+ * TODO Sprint add-itemDto-requests.
  */
+
 @Data
 public class UpdateItemRequestDto {
     @NotNull(message = "ID запроса не заполнен")
-    private long id;
+    private Long id;
     private String description;
 
     public boolean hasDescription() {

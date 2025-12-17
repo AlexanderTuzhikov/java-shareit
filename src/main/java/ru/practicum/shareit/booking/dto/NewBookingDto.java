@@ -5,15 +5,12 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
-/**
- * TODO Sprint add-bookings.
- */
 @Data
 public class NewBookingDto {
-    @NotNull(message = "Дата начала бронирования не заполнена")
+    @NotNull(message = "start is null")
     LocalDateTime start;
-    @NotNull(message = "Дата окончания бронирования не заполнена")
+    @NotNull(message = "end is null")
     LocalDateTime end;
-    @NotNull(message = "Id вещи для бронирования не заполнен")
-    long itemId;
+    @NotNull(message = "itemId is null")
+    Long itemId;
 }

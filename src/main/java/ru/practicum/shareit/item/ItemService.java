@@ -1,5 +1,8 @@
 package ru.practicum.shareit.item;
 
+import ru.practicum.shareit.item.comment.dto.CommentDto;
+import ru.practicum.shareit.item.comment.dto.NewCommentDto;
+import ru.practicum.shareit.item.dto.ItemBookingDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.NewItemDto;
 import ru.practicum.shareit.item.dto.UpdateItemDto;
@@ -7,15 +10,17 @@ import ru.practicum.shareit.item.dto.UpdateItemDto;
 import java.util.List;
 
 public interface ItemService {
-    ItemDto postItem(long userId, NewItemDto newItem);
+    ItemDto postItem(Long userId, NewItemDto newItem);
 
-    ItemDto patchItem(long userId, long itemId, UpdateItemDto updateItemDto);
+    ItemDto patchItem(Long userId, Long itemId, UpdateItemDto updateItemDto);
 
-    void deleteItem(long itemId);
+    void deleteItem(Long itemId);
 
-    ItemDto getItem(long userId, long itemId);
+    ItemBookingDto getItems(Long userId, Long itemId);
 
-    List<ItemDto> getItems(long userId);
+    List<ItemBookingDto> getItems(Long userId);
 
-    List<ItemDto> getItemsSearch(long userId, String text);
+    List<ItemDto> getItemsSearch(Long userId, String text);
+
+    CommentDto postComment(Long userId, Long itemId, NewCommentDto newCommentDto);
 }

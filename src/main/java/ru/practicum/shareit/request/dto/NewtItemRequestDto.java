@@ -4,8 +4,9 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 /**
- * TODO Sprint add-item-requests.
+ * TODO Sprint add-itemDto-requests.
  */
+
 @Data
 public class NewtItemRequestDto {
     @NotNull(message = "Описание запроса вещи не заполнено")

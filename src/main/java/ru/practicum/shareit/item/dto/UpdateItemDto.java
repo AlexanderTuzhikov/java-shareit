@@ -1,16 +1,9 @@
 package ru.practicum.shareit.item.dto;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-
-/**
- * TODO Sprint add-controllers.
- */
 
 @Data
 public class UpdateItemDto {
-    @NotNull(message = "ID бронирования не заполнен")
-    private long id;
     private String name;
     private String description;
     private Boolean available;
