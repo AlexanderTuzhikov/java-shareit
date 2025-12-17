@@ -7,11 +7,11 @@ import lombok.Data;
 
 @Data
 public class NewUserDto {
-    @NotNull(message = "Имя пользователя Null")
-    @NotBlank(message = "Имя пользователя Blank")
+    @NotNull(message = "name is null")
+    @NotBlank(message = "name is blank")
     private String name;
-    @NotNull(message = "Электронная почта Null")
-    @NotBlank(message = "Электронная почта Blank")
-    @Email(message = "Не верная электронная почта")
+    @NotNull(message = "email is null")
+    @NotBlank(message = "email is blank")
+    @Email(message = "invalid email")
     private String email;
 }
