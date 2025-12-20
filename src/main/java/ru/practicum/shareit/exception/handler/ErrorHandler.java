@@ -1,12 +1,13 @@
 package ru.practicum.shareit.exception.handler;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.practicum.shareit.exception.ConflictException;
+import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.ForbiddenActionException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
@@ -31,16 +32,16 @@ public class ErrorHandler {
         return new ErrorResponse(exception.getMessage(), "Ошибка доступа");
     }
 
-    @ExceptionHandler(ConflictException.class)
+    @ExceptionHandler(DataIntegrityViolationException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handlerConflictException(final RuntimeException exception) {
         log.error("Конфликт данных. Error: {}", exception.getMessage());
         return new ErrorResponse(exception.getMessage(), "Конфликт данных");
     }
 
-    @ExceptionHandler(ValidationException.class)
+    @ExceptionHandler({ValidationException.class, BadRequestException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleValidation(final ValidationException exception) {
+    public ErrorResponse handleValidation(final RuntimeException exception) {
         log.error("Ошибка валидации данных. Error: {}", exception.getMessage());
         return new ErrorResponse(exception.getMessage(), "Ошибка валидации данных");
     }

@@ -1,15 +1,12 @@
 package ru.practicum.shareit.user.dto;
 
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
 public class UpdateUserDto {
-    @NotNull(message = "ID пользователя Null")
-    private long id;
     private String name;
-    @Email(message = "Не верная электронная почта")
+    @Email(message = "invalid email")
     private String email;
 
     public boolean hasName() {
