@@ -3,6 +3,7 @@ package ru.practicum.shareit.item;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
@@ -20,6 +21,8 @@ import ru.practicum.shareit.item.dto.NewItemDto;
 import ru.practicum.shareit.item.dto.UpdateItemDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.ItemRequestRepository;
+import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
@@ -29,10 +32,12 @@ import java.util.List;
 @Slf4j
 @Service
 @AllArgsConstructor
+@Transactional(readOnly = true)
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
+    private final ItemRequestRepository itemRequestRepository;
     private final CommentRepository commentRepository;
 
     private final ItemMapper itemMapper;
@@ -40,12 +45,19 @@ public class ItemServiceImpl implements ItemService {
     private final CommentMapper commentMapper;
 
     @Override
+    @Transactional
     public ItemDto postItem(Long userId, NewItemDto newItemDto) {
         log.info("POST item: {}", newItemDto);
         User user = checkUserExists(userId);
 
         Item item = itemMapper.mapToItem(newItemDto);
         item.setOwner(user);
+
+        if(newItemDto.getRequestId() != null) {
+            ItemRequest itemRequest = checkItemRequestExists(newItemDto.getRequestId());
+            item.setRequest(itemRequest);
+        }
+
         log.debug("MAP to item: {}", item);
 
         Item savedItem = itemRepository.save(item);
@@ -55,6 +67,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public ItemDto patchItem(Long userId, Long itemId, UpdateItemDto updateItemDto) {
         log.info("PATCH item: id={}, update={}", itemId, updateItemDto);
         checkUserExists(userId);
@@ -71,6 +84,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public void deleteItem(Long itemId) {
         log.info("DELETE item: id={}", itemId);
 
@@ -125,6 +139,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public CommentDto postComment(Long userId, Long itemId, NewCommentDto newCommentDto) {
         log.info("POST comment: {}", newCommentDto);
         User user = checkUserExists(userId);
@@ -155,6 +170,14 @@ public class ItemServiceImpl implements ItemService {
                 .orElseThrow(() -> {
                     log.warn("User {} not found", userId);
                     return new NotFoundException("User ID=" + userId + " not found");
+                });
+    }
+
+    private ItemRequest checkItemRequestExists(Long itemRequestId) {
+        return itemRequestRepository.findById(itemRequestId)
+                .orElseThrow(() -> {
+                    log.warn("ItemRequest{} not found", itemRequestId);
+                    return new NotFoundException("User ID=" + itemRequestId + " not found");
                 });
     }
 

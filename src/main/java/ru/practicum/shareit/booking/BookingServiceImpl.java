@@ -3,6 +3,7 @@ package ru.practicum.shareit.booking;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.NewBookingDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
@@ -22,6 +23,7 @@ import java.util.Objects;
 @Slf4j
 @Service
 @AllArgsConstructor
+@Transactional(readOnly = true)
 public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final UserRepository userRepository;
@@ -29,6 +31,7 @@ public class BookingServiceImpl implements BookingService {
     private final BookingMapper bookingMapper;
 
     @Override
+    @Transactional
     public BookingDto postBooking(Long userId, NewBookingDto newBookingDto) {
         log.info("POST booking: {}", newBookingDto);
         checkBookingStartAndEnd(newBookingDto);
@@ -49,6 +52,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional
     public BookingDto patchBooking(Long userId, Long bookingId, boolean approved) {
         log.info("PATCH booking: id={}, approved={}", bookingId, approved);
         Booking booking = checkBookingExists(bookingId);

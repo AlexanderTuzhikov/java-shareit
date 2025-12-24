@@ -5,9 +5,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -25,5 +28,19 @@ public class ItemRequest {
     @JoinColumn(name = "requestor_id", nullable = false)
     private User requestor;
     @JoinColumn(nullable = false)
-    private LocalDateTime created = LocalDateTime.now();
+    private LocalDateTime created;
+    @OneToMany(mappedBy = "request", fetch = FetchType.LAZY)
+    private List<Item> items;
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null || getClass() != object.getClass()) return false;
+        ItemRequest itemRequest = (ItemRequest) object;
+        return id != 0 && id.equals(itemRequest.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
 }

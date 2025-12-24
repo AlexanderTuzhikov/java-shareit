@@ -7,8 +7,8 @@ import lombok.Data;
 
 @Data
 public class NewUserDto {
-    @NotNull(message = "name is null")
-    @NotBlank(message = "name is blank")
+    @NotNull(message = "description is null")
+    @NotBlank(message = "description is blank")
     private String name;
     @NotNull(message = "email is null")
     @NotBlank(message = "email is blank")
