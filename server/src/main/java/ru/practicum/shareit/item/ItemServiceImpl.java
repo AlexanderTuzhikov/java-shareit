@@ -2,6 +2,10 @@ package ru.practicum.shareit.item;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.BookingRepository;
@@ -27,7 +31,6 @@ import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Slf4j
 @Service
@@ -72,7 +75,7 @@ public class ItemServiceImpl implements ItemService {
         log.info("PATCH item: id={}, update={}", itemId, updateItemDto);
         checkUserExists(userId);
         Item item = checkItemExists(itemId);
-        checkUserAccessToPatch(userId, item);
+        checkUserAccessToPatchOrDelete(userId, item);
 
         Item updatedItem = ItemMapper.updateItemFields(item, updateItemDto);
         log.debug("UPDATED item: {}", updatedItem);
@@ -85,14 +88,16 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public void deleteItem(Long itemId) {
+    public void deleteItem(Long userId, Long itemId) {
         log.info("DELETE item: id={}", itemId);
+        Item item = checkItemExists(itemId);
+        checkUserAccessToPatchOrDelete(userId, item);
 
         itemRepository.deleteById(itemId);
     }
 
     @Override
-    public ItemBookingDto getItems(Long userId, Long itemId) {
+    public ItemBookingDto getItem(Long userId, Long itemId) {
         log.info("GET items: id={}", itemId);
         checkUserExists(userId);
         Item item = checkItemExists(itemId);
@@ -105,35 +110,35 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemBookingDto> getItems(Long userId) {
+    public Page<ItemBookingDto> getItems(Long userId, Integer from, Integer size) {
         log.info("GET items for user: id={}", userId);
         checkUserExists(userId);
+        Pageable pageable = PageRequest.of(from / size, size, Sort.by("id").descending());
 
-        List<ItemBookingDto> items = itemRepository.findByOwnerId(userId)
-                .stream()
-                .map(item -> mapItemBookingAndComment(item, userId))
-                .toList();
-        log.debug("FIND size={} items", items.size());
+        Page<ItemBookingDto> items = itemRepository.findByOwnerId(userId, pageable)
+                .map(item -> mapItemBookingAndComment(item, userId));
+
+        log.debug("FIND size={} items", items.getTotalElements());
 
         return items;
     }
 
     @Override
-    public List<ItemDto> getItemsSearch(Long userId, String text) {
+    public Page<ItemDto> getItemsSearch(Long userId, String text, Integer from, Integer size) {
         log.info("GET items search: text={}", text);
         checkUserExists(userId);
+        Pageable pageable = PageRequest.of(from / size, size, Sort.by("id").descending());
+        Boolean available = true;
 
         if (text.isBlank()) {
             log.debug("TEXT is blank");
-            return List.of();
+            return Page.empty();
         }
 
-        List<ItemDto> items = itemRepository.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(text, text)
-                .stream()
-                .filter(Item::isAvailable)
-                .map(itemMapper::mapToItemDto)
-                .toList();
-        log.debug("FIND size={}", items.size());
+        Page<ItemDto> items = itemRepository.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndAvailable(text, text, available, pageable)
+                .map(itemMapper::mapToItemDto);
+
+        log.debug("FIND size={}", items.getTotalElements());
 
         return items;
     }
@@ -181,7 +186,7 @@ public class ItemServiceImpl implements ItemService {
                 });
     }
 
-    private void checkUserAccessToPatch(Long userId, Item item) {
+    private void checkUserAccessToPatchOrDelete(Long userId, Item item) {
         if (!userId.equals(item.getOwner().getId())) {
             log.warn("User ID={} not owner", userId);
             throw new ForbiddenActionException("User ID=" + userId + " not owner item Id=" + item.getId());
