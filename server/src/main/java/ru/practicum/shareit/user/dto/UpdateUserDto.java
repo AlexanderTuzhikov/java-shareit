@@ -1,0 +1,19 @@
+package ru.practicum.shareit.user.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@Data
+@AllArgsConstructor
+public class UpdateUserDto {
+    private String name;
+    private String email;
+
+    public boolean hasName() {
+        return !(name == null);
+    }
+
+    public boolean hasEmail() {
+        return !(email == null);
+    }
+}
