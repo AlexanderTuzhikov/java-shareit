@@ -5,7 +5,6 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import ru.practicum.shareit.item.comment.dto.CommentDto;
 import ru.practicum.shareit.item.comment.dto.NewCommentDto;
-import ru.practicum.shareit.item.comment.dto.UpdateCommentDto;
 import ru.practicum.shareit.item.comment.model.Comment;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
@@ -22,14 +21,6 @@ public interface CommentMapper {
     @Mapping(target = "item", source = "item", qualifiedByName = "mapToItemDto")
     @Mapping(target = "authorName", source = "author.name")
     CommentDto mapToCommentDto(Comment comment);
-
-    static Comment updateCommentFields(Comment comment, UpdateCommentDto updatecommentDto) {
-        if (updatecommentDto.hasText()) {
-            comment.setText(updatecommentDto.getText());
-        }
-
-        return comment;
-    }
 
     @Named("mapToUserDto")
     default UserDto mapToUserDto(User user) {

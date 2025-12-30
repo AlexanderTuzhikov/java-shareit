@@ -7,10 +7,7 @@ import ru.practicum.shareit.item.dto.ItemDtoToRequest;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.NewtItemRequestDto;
-import ru.practicum.shareit.request.dto.UpdateItemRequestDto;
 import ru.practicum.shareit.request.model.ItemRequest;
-import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.model.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,18 +22,6 @@ public interface ItemRequestMapper {
     @Mapping(target = "items", source = "items", qualifiedByName = "mapToItemDtoToRequest")
     ItemRequestDto mapToItemRequestDto(ItemRequest itemRequest);
 
-    static ItemRequest updateItemRequestFields(ItemRequest itemRequest, UpdateItemRequestDto updateItemRequestDto) {
-        if (updateItemRequestDto.hasDescription()) {
-            itemRequest.setDescription(updateItemRequestDto.getDescription());
-        }
-
-        return itemRequest;
-    }
-
-    @Named("mapToUserDto")
-    default UserDto mapToUserDto(User user) {
-        return new UserDto(user.getId(), user.getName(), user.getEmail());
-    }
 
     @Named("mapToItemDtoToRequest")
     default List<ItemDtoToRequest> mapToItemDtoToRequest(List<Item> items) {

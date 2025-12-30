@@ -6,7 +6,6 @@ import org.mapstruct.Named;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.ItemBookingInfoDto;
 import ru.practicum.shareit.booking.dto.NewBookingDto;
-import ru.practicum.shareit.booking.dto.UpdateBookingDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
@@ -27,22 +26,6 @@ public interface BookingMapper {
     BookingDto mapToBookingDto(Booking booking);
 
     ItemBookingInfoDto mapToItemBookingInfoDto(Booking booking);
-
-    static Booking updateBookingFields(Booking booking, UpdateBookingDto updateBookingDto) {
-        if (updateBookingDto.hasStart()) {
-            booking.setStart(updateBookingDto.getStart());
-        }
-
-        if (updateBookingDto.hasEnd()) {
-            booking.setEnd(updateBookingDto.getEnd());
-        }
-
-        if (updateBookingDto.hasStatus()) {
-            booking.setStatus(updateBookingDto.getStatus());
-        }
-
-        return booking;
-    }
 
     @Named("mapToUserDto")
     default UserDto mapToUserDto(User user) {
