@@ -36,3 +36,8 @@ build/
 *.jar
 *.DS_Store
 /target/
+
+*.class
+*.jar
+*.DS_Store
+/target/
